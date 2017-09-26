@@ -1,0 +1,5 @@
+description:
+  Salt Cluster Formula for SUSE Manager. Sets up a complete physical cluster infrastructure for KVM virtualization.
+group: cluster
+after: 
+

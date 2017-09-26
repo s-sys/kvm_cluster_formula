@@ -1,0 +1,179 @@
+ha_cluster:
+  $name: "Cluster configuration"
+  $type: group
+  $scope: group
+
+  transport_method:
+    $name: "Transport"
+    $type: select
+    $values:
+      - Multicast
+    $default: Multicast
+  
+  name:
+    $name: "Cluster Name"
+    $type: text
+    $help: "Name used by the cluster."
+    $default: "hacluster"
+ 
+  crypto_cipher:
+    $name: "crypto_cipher"
+    $type: select
+    $help: "Cipher used to secure messages."
+    $values:
+      - none
+      - 3des
+      - aes128
+      - aes192
+      - aes256
+    $default: aes256
+
+  crypto_hash:
+    $name: "crypt_hash"
+    $type: select
+    $help: "Hash algorithm to use to check message integrity."
+    $visibleIf: ha_cluster$crypto_cipher != none
+    $values:
+      - none
+      - md5
+      - sha1
+      - sha256
+      - sha384
+      - sha512
+    $default: sha256
+ 
+ha_multicast:
+  $name: "Multicast configuration"
+  $type: group
+  $scope: group
+  $visibleIf: ha_cluster$transport_method == Multicast
+
+  bind_interface:
+    $name: "Bind Network Address"
+    $type: text
+    $placeholder: 10.10.10.0
+
+  interface:
+    $name: "Multicast Address"
+    $type: text
+    $default: 239.120.207.168
+
+  port:
+    $name: "Multicast Port"
+    $type: text
+    $default: 5405
+
+ 
+ha_fencing:
+  $name: "Cluster fencing"
+  $type: group
+  $scope: group
+
+  stonith_enabled:
+    $name: "stonith-enabled"
+    $type: boolean
+    $default: true
+ 
+  type:
+    $name: "Stonith method"
+    $type: select
+    $visibleIf: ha_fencing$stonith_enabled == true
+    $values:
+      - IPMI
+      - SBD
+    $default: SBD
+
+sbd_storage:
+  $name: "SBD Device"
+  $type: group
+  $scope: group
+  $visibleIf: ha_fencing$type == SBD
+
+  ip:
+    $name: "Storage Hostname/IP"
+    $type: text
+    $placeholder: "10.10.10.210"
+
+  port:
+    $name: "Storage Port"
+    $type: text
+    $default: "3260"
+ 
+  iqn_name:
+    $name: "IQN name"
+    $type: text
+    $default: "iqn.2017-09.com.susemgr:5cc34e87-7735-421b-9255-7fcc3d508a25"
+  
+  block_device:
+    $name: "Block device on disk"
+    $type: text
+    $default: "/dev/disk/by-id/scsi-36001405ca239299311b44648c42fef54"
+
+
+ha_management:
+  $name: "Cluster management"
+  $type: group
+  $scope: group
+
+  adm_ip:
+    $name: "Administration IP"
+    $type: text
+    $placeholder: "10.10.10.200"
+    $help: "IP Address used for cluster management."
+
+  no_quorum_policy:
+    $name: "no-quorum-policy"
+    $type: select
+    $visibleIf: ha_fencing$stonith_enabled == true
+    $values:
+      - ignore
+      - freeze
+      - stop
+      - suicide
+    $default: ignore
+    $help: "What action should be done by cluster when quorum is lost."
+  
+  migration_threshold:
+    $name: "migration-threshold"
+    $type: number
+    $default: 3
+    $help: "How many times retry restart resource on same node before give up."
+  
+  failure_timeout:
+    $name: "failure-timeout"
+    $type: number
+    $default: 300
+    $help: "After a node is considered failed, wait this amount of seconds before try a new start on the node."
+
+
+ha_user:
+  $name: "Cluster user"
+  $type: group
+  $scope: group
+
+  password:
+    $name: "hacluster user password"
+    $type: password
+    $default: "linux"
+ 
+
+nfs:
+  $name: "NFS Configuration"
+  $type: group
+  $scope: group
+
+  server:
+    $name: "Server Hostname/IP"
+    $type: text
+    $placeholder: "10.10.10.210"
+
+  source_directory:
+    $name: "Remote NFS directory"
+    $type: text
+    $placeholder: "/export/vms"
+
+  mount_directory:
+    $name: "Local mount directory"
+    $type: text
+    $placeholder: "/export/vms"
+

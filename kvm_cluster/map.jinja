@@ -1,0 +1,8 @@
+{% set cluster = salt['pillar.get']('ha_cluster') %}
+{% set multicast = salt['pillar.get']('ha_multicast') %}
+{% set fencing = salt['pillar.get']('ha_fencing') %}
+{% set sbd = salt['pillar.get']('sbd_storage') %}
+{% set management = salt['pillar.get']('ha_management') %}
+{% set user = salt['pillar.get']('ha_user') %}
+{% set nfs = salt['pillar.get']('nfs') %}
+
